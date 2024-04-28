@@ -238,6 +238,7 @@ def generate_all_figs(ds_rdap, ds_whois):
     redundancy(ds_rdap, ds_whois)
     records_size(ds_rdap, ds_whois)
     response_time()
+    records_size_appendix(ds_whois)
 
 
 def main():

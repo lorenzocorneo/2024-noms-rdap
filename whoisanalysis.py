@@ -155,7 +155,7 @@ def load_dataset() -> List[WHOISRecord]:
     ret = []
     connection = sqlite3.connect(whois_db_path)
     for row in connection.execute(
-        "SELECT ip, record FROM whois_records AS r INNER JOIN nodes AS n WHERE r.node_id = n.id LIMIT 1000;"
+        "SELECT ip, record FROM whois_records AS r INNER JOIN nodes AS n WHERE r.node_id = n.id;"
     ):
         ret.append(WHOISRecord(row[1], row[0]))
     return ret

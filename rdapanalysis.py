@@ -81,7 +81,7 @@ def load_dataset() -> List[RDAPRecord]:
     ret = []
     connection = sqlite3.connect(rdap_db_path)
     for row in connection.execute(
-        "SELECT ip, record, r.id FROM whois_records AS r INNER JOIN nodes AS n WHERE r.node_id = n.id LIMIT 1000;"
+        "SELECT ip, record, r.id FROM whois_records AS r INNER JOIN nodes AS n WHERE r.node_id = n.id;"
     ):
         ret.append(RDAPRecord(row[1], row[0], row[2]))
     return ret
@@ -580,6 +580,6 @@ def main():
     records = [r for r in load_dataset() if not r.isError() and not r.isNotFound()]
     generate_all_figs(records)
 
-
+records_size_appendix(
 if __name__ == "__main__":
     main()

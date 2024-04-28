@@ -1,0 +1,14 @@
+CREATE TABLE `organization_types` (`id` integer,`created_at` datetime,`updated_at` datetime,`deleted_at` datetime,`name` text NOT NULL,PRIMARY KEY (`id`));
+CREATE INDEX `idx_organization_types_deleted_at` ON `organization_types`(`deleted_at`);
+CREATE INDEX `idx_organization_types_name` ON `organization_types`(`name`);
+CREATE TABLE `organizations` (`id` integer,`created_at` datetime,`updated_at` datetime,`deleted_at` datetime,`name` text NOT NULL,`type_id` integer,PRIMARY KEY (`id`),CONSTRAINT `fk_organizations_type` FOREIGN KEY (`type_id`) REFERENCES `organization_types`(`id`));
+CREATE INDEX `idx_organizations_name` ON `organizations`(`name`);
+CREATE INDEX `idx_organizations_deleted_at` ON `organizations`(`deleted_at`);
+CREATE TABLE `nodes` (`id` integer,`created_at` datetime,`updated_at` datetime,`deleted_at` datetime,`ip` varchar,`organization_id` integer,PRIMARY KEY (`id`),CONSTRAINT `fk_nodes_organization` FOREIGN KEY (`organization_id`) REFERENCES `organizations`(`id`));
+CREATE UNIQUE INDEX `idx_nodes_ip` ON `nodes`(`ip`);
+CREATE INDEX `idx_nodes_deleted_at` ON `nodes`(`deleted_at`);
+CREATE TABLE `whois_servers` (`id` integer,`created_at` datetime,`updated_at` datetime,`deleted_at` datetime,`name` text,`url` text,PRIMARY KEY (`id`));
+CREATE UNIQUE INDEX `idx_whois_servers_name` ON `whois_servers`(`name`);
+CREATE INDEX `idx_whois_servers_deleted_at` ON `whois_servers`(`deleted_at`);
+CREATE TABLE `whois_records` (`id` integer,`created_at` datetime,`updated_at` datetime,`deleted_at` datetime,`node_id` integer,`server_id` integer,`record` text,`counter` integer,`http_redirects` integer,`rtt` integer,PRIMARY KEY (`id`),CONSTRAINT `fk_whois_records_server` FOREIGN KEY (`server_id`) REFERENCES `whois_servers`(`id`),CONSTRAINT `fk_whois_records_node` FOREIGN KEY (`node_id`) REFERENCES `nodes`(`id`));
+CREATE INDEX `idx_whois_records_deleted_at` ON `whois_records`(`deleted_at`);

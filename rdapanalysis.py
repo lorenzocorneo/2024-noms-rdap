@@ -6,7 +6,6 @@ from dataclasses import dataclass
 from functools import lru_cache
 from typing import List
 
-import bson
 import matplotlib.patches as patches
 import matplotlib.pyplot as plt
 import numpy as np
@@ -73,12 +72,16 @@ class RDAPRecord:
             else False
         )
 
+    @lru_cache(32)
+    def recordSize(self) -> int:
+        """Returns the size in bytes of a utf-8 formatted string"""
+        return len(self.raw.encode("utf-8"))
 
 def load_dataset() -> List[RDAPRecord]:
     ret = []
     connection = sqlite3.connect(rdap_db_path)
     for row in connection.execute(
-        "SELECT ip, record, r.id FROM whois_records AS r INNER JOIN nodes AS n WHERE r.node_id = n.id;"
+        "SELECT ip, record, r.id FROM whois_records AS r INNER JOIN nodes AS n WHERE r.node_id = n.id LIMIT 1000;"
     ):
         ret.append(RDAPRecord(row[1], row[0], row[2]))
     return ret
@@ -519,7 +522,7 @@ def parsing_time(records: List[RDAPRecord]):
     plt.ylabel("ECDF")
     plt.legend(loc="best")
     plt.tight_layout()
-    plt.savefig("/home/lc/dev/whois-analysis/figures/cdf-rdap-parsing.pdf")
+    plt.savefig("./figures/cdf-rdap-parsing.pdf")
     plt.show()
 
     fig, ax = plt.subplots(figsize=(2.7, 2.7))
@@ -539,7 +542,7 @@ def parsing_time(records: List[RDAPRecord]):
     plt.ylabel("Normalized parsing time")
     # plt.legend(loc=2)
     plt.tight_layout()
-    plt.savefig("/home/lc/dev/whois-analysis/figures/bar-rdap-parsing.pdf")
+    plt.savefig("./figures/bar-rdap-parsing.pdf")
     plt.show()
 
 
@@ -549,7 +552,7 @@ def http_redirects(xs: List[int]):
     fig, ax = plt.subplots(figsize=(2.7, 2.7))
 
     xs, ys = hcdf(xs)
-    with open("/home/lc/dev/whois-analysis/data/cdf-http-redirects.dat", "w") as f:
+    with open("./data/cdf-http-redirects.dat", "w") as f:
         f.write("x y\n")
         [f.write(f"{x} {y}\n") for x, y in zip(xs, ys)]
 
@@ -562,20 +565,6 @@ def http_redirects(xs: List[int]):
     # plt.legend(loc="best")
     plt.tight_layout()
     plt.savefig("./figures/cdf-http-redirects.pdf")
-    plt.show()
-
-
-def bson_vs_bson_flat(records: List[RDAPRecord]):
-    bs = [len(bson.dumps(r.to_dict())) for r in records]
-    fs = [len(bson.dumps(rdap_compression(r.to_dict()))) for r in records]
-
-    fig, ax = plt.subplots(figsize=(3.4, 2.7))
-    plt.plot(sorted(bs), cdf(bs), label="bson")
-    plt.plot(sorted(fs), cdf(fs), label="bson-flat")
-    plt.xlabel("Size (KB)")
-    plt.ylabel("ECDF")
-    plt.legend(loc="best")
-    plt.tight_layout()
     plt.show()
 
 

@@ -1,16 +1,16 @@
 # From WHOIS to RDAP: Are IP Lookup Services Getting any Better?
 
-This repository contains the code used for the evaluation, analysis and figures included in the paper: "From WHOIS to RDAP: Are IP Lookup Services Getting any Better?", which is part of the proceeding of IEEE NOMS 2024.
+This repository contains the code used for the evaluation, analysis and figures included in the paper: "From WHOIS to RDAP: Are IP Lookup Services Getting any Better?", which is part of the proceeding of IEEE NOMS 2024. To be noticed, the dataset is not provided and should be retrieved separately in order to run the analysis provided in the code.
 
 **DISCLAIMER:** The code is best effort and not actively maintained. It was developed for the sole purpose to provide insights on IP lookup services that are included in the paper.
 
 ## How to run the code
-TODO: Add requirements file and a main.py file that runs the whole pipeline.
 
-First of all, install the required libraries listed in the file `requirements.txt` with the following command:
+First of all, install the required libraries listed in the file `requirements.txt` and create the folders `data` and `figures` to store the output of the code.
 
 ```sh
 pip install -r requirements.txt
+mkdir data figures
 ```
 
 Second, change the paths in the file `utils.py` (lines 10 to 13) to point to your database(s) containing RDAP, or WHOIS, records. For the evaluation, a `sqlite3` database was used with a simple schema, e.g., two columns such as UUID and stored information; it is possible to see the queries to the various databases in the code. To be notice, the papers uses results only from RDAP, WHOIS, and headers databases (RPSL was not used).
